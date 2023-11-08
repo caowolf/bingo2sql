@@ -740,6 +740,7 @@ func NewBinlogParser(ctx context.Context, cfg *BinlogParserConfig) (*MyBinlogPar
 	p := new(MyBinlogParser)
 
 	p.allTables = make(map[uint64]*Table)
+	log.Info("........................................................")
 	p.jumpGtids = make(map[*GtidSetInfo]bool)
 	p.ch = make(chan *row, cfg.Threads)
 
@@ -1139,6 +1140,9 @@ func (p *MyBinlogParser) checkError(e error) {
 }
 
 func (p *MyBinlogParser) schemaFilter(table *replication.TableMapEvent) bool {
+
+	tableName := strings.ToLower(string(table.Table))
+	log.Info(tableName)
 	if len(p.OnlyDatabases) == 0 && len(p.OnlyTables) == 0 {
 		return true
 	}
@@ -1148,7 +1152,7 @@ func (p *MyBinlogParser) schemaFilter(table *replication.TableMapEvent) bool {
 			return false
 		}
 	}
-	tableName := strings.ToLower(string(table.Table))
+
 	if len(p.OnlyTables) > 0 {
 
 		if db, ok := p.OnlyTables[tableName]; !ok {
@@ -1164,6 +1168,10 @@ func (p *MyBinlogParser) schemaFilter(table *replication.TableMapEvent) bool {
 func (p *MyBinlogParser) generateInsertSQL(t *Table, e *replication.RowsEvent,
 	binEvent *replication.BinlogEvent) error {
 	tableName := getTableName(e)
+	if strings.Contains(tableName, "gi_sys_log") {
+		return nil
+	}
+	//log.Error("cwolf"+tableName)
 	// if len(t.Columns) < int(e.ColumnCount) {
 	// 	return fmt.Errorf("表%s缺少列!当前列数:%d,binlog的列数%d",
 	// 		tableName, len(t.Columns), e.ColumnCount)
@@ -2293,7 +2301,7 @@ func (p *MyBinlogParser) parseSingleEvent(e *replication.BinlogEvent) (ok bool, 
 			}
 		}
 	}
-
+	//log.Info("cwolf9999999999999999999")
 	switch event := e.Event.(type) {
 	case *replication.GTIDEvent:
 		if len(p.includeGtids) > 0 {

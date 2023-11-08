@@ -30,7 +30,8 @@ var (
 )
 
 var (
-	host     = flag.StringP("host", "h", "", "数据库地址")
+	host = flag.StringP("host", "h", "", "数据库地址")
+
 	port     = flag.IntP("port", "P", 3306, "端口号")
 	user     = flag.StringP("user", "u", "", "用户名")
 	password = flag.StringP("password", "p", "", "密码")
@@ -170,12 +171,14 @@ func runParse() {
 	} else {
 		cfg.ThreadID = uint32(*threadID)
 	}
-
+	log.Error("binlog解析操作失败")
 	if p, err := core.NewBinlogParser(context.Background(), cfg); err != nil {
-		log.Error("binlog解析操作失败")
+		log.Error("222222222222222222222222222222222")
+		log.Error(cfg.Host + "host")
 		log.Error(err)
 		return
 	} else {
+		log.Info("开始了")
 		err = p.Parser()
 		if err != nil {
 			log.Error("binlog解析操作失败")
