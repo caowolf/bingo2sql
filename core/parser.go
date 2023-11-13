@@ -1171,6 +1171,14 @@ func (p *MyBinlogParser) generateInsertSQL(t *Table, e *replication.RowsEvent,
 	if strings.Contains(tableName, "gi_sys_log") {
 		return nil
 	}
+	if strings.Contains(tableName, "xxl_job_log") {
+		return nil
+	}
+
+	if strings.Contains(tableName, "t_tws_real_time_devices") {
+		return nil
+	}
+
 	//log.Error("cwolf"+tableName)
 	// if len(t.Columns) < int(e.ColumnCount) {
 	// 	return fmt.Errorf("表%s缺少列!当前列数:%d,binlog的列数%d",
